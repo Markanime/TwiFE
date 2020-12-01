@@ -1,0 +1,1 @@
+mklink /D .\Assets\Scripts\TwitchIRC ..\..\chat\TwitchIRC
