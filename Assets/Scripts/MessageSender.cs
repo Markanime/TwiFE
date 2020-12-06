@@ -14,6 +14,6 @@ public class MessageSender : MonoBehaviour
     // Update is called once per frame
     public void PrintMessage(Chatter chatter)
     {
-        text.Type(chatter.message);
+        text.Type(new ChatterWithImages(chatter));
     }
 }

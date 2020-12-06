@@ -1,24 +1,29 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class TypingAnimation : MonoBehaviour
 {
     public float timer = 10;
-    private Text text;
-    private string message;
+    private TextController textController;
+    private string message = string.Empty;
     private float t = 0;
     private int c = 0;
 
     void Start()
     {
-        text = GetComponent<Text>();
-        Type(text.text);
+        message = string.Empty;
+        textController = new TextController(this);
+        Type(textController.text);
     }
 
+    public void Type(ChatterWithImages _chatter)
+    {
+        Type(_chatter.message);
+        textController.SetChatter(_chatter);
+    }
     public void Type(string _text)
     {
         message = _text;
-        text.text = string.Empty;
+        textController.text = string.Empty;
         c = 0;
     }
 
@@ -36,7 +41,7 @@ public class TypingAnimation : MonoBehaviour
     {
         if(c < message.Length)
         {
-            text.text += message[c];
+            textController.text += message[c];
             c++;
         }
     }
