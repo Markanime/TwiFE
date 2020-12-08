@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ChatterWithImages
 {
     public string message => chatter.message;
+    public Channel channel;
     public List<Texture2D> badges;
     public List<Emote> emotes;
 
@@ -11,10 +12,10 @@ public class ChatterWithImages
     public ChatterWithImages(Chatter _chatter)
     {
         chatter = _chatter;
-        ProccessTags(chatter);
+        ProccessChatter(chatter);
     }
 
-    private void ProccessTags(Chatter chatter)
+    private void ProccessChatter(Chatter chatter)
     {
         foreach (var badge in chatter.tags.badges)
         {
@@ -22,10 +23,8 @@ public class ChatterWithImages
             //badge.version
         }
         emotes = new List<Emote>();
-        foreach (var emote in chatter.tags.emotes)
-        {
-            emotes.Add(new GameObject().AddComponent<Emote>().Load(emote));
-        }
+        chatter.tags.emotes.ForEach(e => emotes.Add(new GameObject().AddComponent<Emote>().Load(e)));
+        channel = new GameObject().AddComponent<Channel>().Load(chatter.login) as Channel;
     }
 
     public KeyValuePair<bool, Emote>  Contais(int index)
@@ -39,5 +38,10 @@ public class ChatterWithImages
             }
         }
         return new KeyValuePair<bool, Emote>(false,null);
+    }
+
+    ~ChatterWithImages()
+    {
+        emotes.ForEach(e => MonoBehaviour.Destroy(e));
     }
 }

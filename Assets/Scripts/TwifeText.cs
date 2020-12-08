@@ -8,7 +8,6 @@ public class TwifeText : MonoBehaviour
     public float size = 14;
     public Font font;
     public Color color;
-    public float distance = 10;
     [HideInInspector]
     public string text
     {
@@ -23,7 +22,21 @@ public class TwifeText : MonoBehaviour
         }
     }
     private string _text = string.Empty;
-    public List<GameObject> gameObjects;
+    private ChatterWithImages chatter;
+    private List<GameObject> gameObjects;
+
+    public int characterLimit => CharacterLimit();
+
+    public void SetChatter(ChatterWithImages _chatter)
+    {
+        this.chatter = _chatter;
+    }
+
+    public int CharacterLimit()
+    {
+        var sizeDelta = GetComponent<RectTransform>().sizeDelta;
+        return (int)(((sizeDelta.x / size) - 1 )* ((sizeDelta.y / size) - 1)); 
+    }
 
     void Awake()
     {
@@ -69,75 +82,66 @@ public class TwifeText : MonoBehaviour
     private void ChangeChar(string character, GameObject gameObject)
     {
         if (!gameObject.GetComponent<Text>())
-            BuildChar(gameObject, character);
-        if (gameObject.GetComponent<Image>())
+        {
             MonoBehaviour.Destroy(gameObject.GetComponent<Image>());
-        gameObject.GetComponent<Text>().text = character;
-        gameObject.name = character;
+            BuildChar(gameObject, character);
+        }
+        else
+        {
+            gameObject.GetComponent<Text>().text = character;
+            gameObject.name = character;
+        }
     }
 
     private GameObject BuildChar(string character, RectTransform prev)
     {
-        int index = gameObjects.Count - 1;
+        int index = gameObjects.Count;
         var result = chatter.Contais(index);
 
-        GameObject go = BuildChar(character);
-
-        float dis = result.Key ? 0 : distance;
-        go.GetComponent<RectTransform>().anchoredPosition = new Vector2(prev.anchoredPosition.x + dis, go.GetComponent<RectTransform>().anchoredPosition.y);
-        return go;
+        GameObject gameObject = BuildChar(character);
+        var parentSize = gameObject.transform.parent.GetComponent<RectTransform>().sizeDelta;
+        var rectTransform = gameObject.GetComponent<RectTransform>();
+        float nextX = prev.anchoredPosition.x + size;
+        float X = nextX < parentSize.x/2 ? (result.Key ? prev.anchoredPosition.x : nextX) : rectTransform.anchoredPosition.x;
+        float Y = nextX < parentSize.x/2 ? prev.anchoredPosition.y : prev.anchoredPosition.y - size;
+        rectTransform.anchoredPosition = new Vector2(X,Y);
+        return gameObject;
     }
 
     private GameObject BuildChar(string character)
     {
         GameObject gameObject =  BuildChar(new GameObject(character),character);
-        gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
+        var parentSize = gameObject.transform.parent.GetComponent<RectTransform>().sizeDelta;
+        var rectTransform = gameObject.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(size, size);
+        rectTransform.anchoredPosition = new Vector2(parentSize.x / 2 * -1 + size, parentSize.y/2 - size);
         return gameObject;
     }
 
     private GameObject BuildChar(GameObject gameObject,string character)
     {
         gameObject.transform.SetParent(this.transform, false);
-        
-
         int index = gameObjects.Count;
-        var result = chatter.Contais(index);
-        if (result.Key)
+        var emoticonItem = chatter.Contais(index);
+        bool condition = emoticonItem.Key ? emoticonItem.Value.GetIndex(index).startIndex == index : false;
+        if (condition)
         {
-            if (result.Value.GetIndex(index).startIndex == index)
-            {
-                var i = gameObject.AddComponent<Image>();
-                StartCoroutine(result.Value.GetTexture(i));
-                return i.gameObject;
-            }
-            else
-            {
-                var t = gameObject.AddComponent<Text>();
-                t.text = string.Empty;
-                t.font = font;
-                t.color = color;
-                t.fontSize = (int)size;
-                t.horizontalOverflow = HorizontalWrapMode.Overflow;
-                t.verticalOverflow = VerticalWrapMode.Overflow;
-                return t.gameObject;
-            }
+            var i = gameObject.AddComponent<Image>();
+            i.color = new Color(i.color.r, i.color.g, i.color.b, 0);
+            StartCoroutine(emoticonItem.Value.GetTexture(i));
+            return i.gameObject;
         }
         else
         {
             var t = gameObject.AddComponent<Text>();
-            t.text = character;
+            t.text = emoticonItem.Key ? string.Empty : character;
             t.font = font;
             t.color = color;
-            t.fontSize = (int)size;
+            t.fontSize = (int)size -1;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
             return t.gameObject;
         }
     }
-    
-    private ChatterWithImages chatter;
-    public void SetChatter(ChatterWithImages _chatter)
-    {
-        this.chatter = _chatter;
-    }
+
 }

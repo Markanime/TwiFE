@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class TypingAnimation : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class TypingAnimation : MonoBehaviour
     private string message = string.Empty;
     private float t = 0;
     private int c = 0;
-
+    public float idleSeconds = 0;
     void Start()
     {
         message = string.Empty;
@@ -22,9 +23,10 @@ public class TypingAnimation : MonoBehaviour
     }
     public void Type(string _text)
     {
-        message = _text;
+        message = _text.Length > textController.characterLimit ? _text.Substring(0, textController.characterLimit -1) : _text;
         textController.text = string.Empty;
         c = 0;
+        idleSeconds = 0;
     }
 
     void Update()
@@ -35,6 +37,7 @@ public class TypingAnimation : MonoBehaviour
             t = 0;
             PrintChar();
         }
+        Idle();
     }
 
     void PrintChar()
@@ -44,5 +47,10 @@ public class TypingAnimation : MonoBehaviour
             textController.text += message[c];
             c++;
         }
+    }
+    void Idle()
+    {
+        if (c >= message.Length)
+            idleSeconds += Time.deltaTime;
     }
 }
