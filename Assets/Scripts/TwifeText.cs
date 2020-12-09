@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class TwifeText : MonoBehaviour
 {
     public float size = 14;
+    public Vector2 distance = new Vector2(0,0);
     public Font font;
     public Color color;
+
+    private Vector2 realSize => new Vector2(size + distance.x,size + distance.y);
     [HideInInspector]
     public string text
     {
@@ -35,7 +38,7 @@ public class TwifeText : MonoBehaviour
     public int CharacterLimit()
     {
         var sizeDelta = GetComponent<RectTransform>().sizeDelta;
-        return (int)(((sizeDelta.x / size) - 1 )* ((sizeDelta.y / size) - 1)); 
+        return (int)(((sizeDelta.x / realSize.x) - 1 )* ((sizeDelta.y / realSize.y) - 1)); 
     }
 
     void Awake()
@@ -101,9 +104,9 @@ public class TwifeText : MonoBehaviour
         GameObject gameObject = BuildChar(character);
         var parentSize = gameObject.transform.parent.GetComponent<RectTransform>().sizeDelta;
         var rectTransform = gameObject.GetComponent<RectTransform>();
-        float nextX = prev.anchoredPosition.x + size;
+        float nextX = prev.anchoredPosition.x + realSize.x;
         float X = nextX < parentSize.x/2 ? (result.Key ? prev.anchoredPosition.x : nextX) : rectTransform.anchoredPosition.x;
-        float Y = nextX < parentSize.x/2 ? prev.anchoredPosition.y : prev.anchoredPosition.y - size;
+        float Y = nextX < parentSize.x/2 ? prev.anchoredPosition.y : prev.anchoredPosition.y - realSize.y;
         rectTransform.anchoredPosition = new Vector2(X,Y);
         return gameObject;
     }
@@ -140,6 +143,7 @@ public class TwifeText : MonoBehaviour
             t.fontSize = (int)size -1;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
+            t.alignment = TextAnchor.LowerCenter;
             return t.gameObject;
         }
     }

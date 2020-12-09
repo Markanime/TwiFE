@@ -27,6 +27,19 @@ public class ChatterWithImages
         channel = new GameObject().AddComponent<Channel>().Load(chatter.login) as Channel;
     }
 
+    public void ChangeEmoteIndex()
+    {
+        foreach (var chatterEmote in chatter.tags.emotes) {
+            foreach (var emote in emotes)
+            {
+                if (emote.id == chatterEmote.id)
+                {
+                    emote.ChangeIndex(chatterEmote);
+                }
+            }
+        }
+    }
+
     public KeyValuePair<bool, Emote>  Contais(int index)
     {
         foreach(var emote in emotes)
@@ -40,8 +53,4 @@ public class ChatterWithImages
         return new KeyValuePair<bool, Emote>(false,null);
     }
 
-    ~ChatterWithImages()
-    {
-        emotes.ForEach(e => MonoBehaviour.Destroy(e));
-    }
 }

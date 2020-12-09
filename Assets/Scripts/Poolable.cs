@@ -34,7 +34,7 @@ public class Poolable : MonoBehaviour
     public IEnumerator GetTexture(string url, Image i)
     {
 
-        if (!loaded)
+        if (!loaded && !string.IsNullOrEmpty(url))
         {
             using (UnityWebRequest webRequest = UnityWebRequestTexture.GetTexture(url))
             {

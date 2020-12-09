@@ -656,6 +656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 20
+  distance: {x: 0, y: 0}
   font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!224 &1283139807
@@ -862,9 +863,9 @@ MonoBehaviour:
     parseTwitchEmotes: 1
     debugIRC: 1
   details:
-    oauth: oauth:yourtoken
+    oauth: your token
     nick: Markanime
-    channel: Markanime
+    channel: mym_alkapone
   userChatter:
     login: 
     channel: 

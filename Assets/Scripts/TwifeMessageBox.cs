@@ -12,6 +12,7 @@ public class TwifeMessageBox : MonoBehaviour
     public Text userName;
     private List<ChatterWithImages> queue = new List<ChatterWithImages>();
     private Animator animator;
+    private bool printing = false;
 
     private void Start()
     {
@@ -24,43 +25,54 @@ public class TwifeMessageBox : MonoBehaviour
 
     private void Update()
     {
-        if (queue.Count > 0)
+        if (!printing)
         {
-            text.timer = timerRange.x;
+            if (queue.Count > 0)
+            {
+                text.timer = timerRange.x;
 
-            if (text.idleSeconds > maxSeconds)
-            {
-                Print(queue[0]);
-                queue.RemoveAt(0);
+                if (text.idleSeconds > maxSeconds)
+                {
+                    Print(queue[0]);
+                    queue.RemoveAt(0);
+                }
             }
-        }
-        else
-        {
-            text.timer = timerRange.y;
-            if (text.idleSeconds > maxSeconds * 3)
+            else
             {
-                animator.SetBool("hide",true);
+                text.timer = timerRange.y;
+                if (text.idleSeconds > maxSeconds * 3)
+                {
+                    animator.SetBool("hide", true);
+                }
             }
         }
     }
-
     private void Print(ChatterWithImages chatter)
     {
-        if(chatter.channel.id != userName.text)
-            animator.SetBool("hide", true);
-        else
-            animator.SetBool("hide", false);
-        StartCoroutine(Chat(chatter));
+        printing = true;
+        StartCoroutine(PrintCoRoutine(chatter));
 
     }
 
-    IEnumerator Chat(ChatterWithImages chatter)
+    IEnumerator PrintCoRoutine(ChatterWithImages chatter)
     {
-        yield return chatter.channel.GetTexture(channelIcon);
-        userName.text = chatter.channel.id;
+        //check if there is a new user
+        bool newUser = chatter.channel.id != userName.text;
+        animator.SetBool("hide", newUser);
+
+        //give some time to hide the previus user
+        yield return new WaitForEndOfFrame();
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsTag("hidden") && newUser)
+            yield return new WaitForSeconds(1f);
         animator.SetBool("hide", false);
-        if(!animator.GetCurrentAnimatorStateInfo(0).IsName("show"))
+
+        //change the current user's image, name and message and show it
+        chatter.ChangeEmoteIndex();
+        userName.text = chatter.channel.id;
+        yield return chatter.channel.GetTexture(channelIcon);
+        if(!animator.GetCurrentAnimatorStateInfo(0).IsTag("showing"))
             animator.SetTrigger("show");
         text.Type(chatter);
+        printing = false;
     }
 }

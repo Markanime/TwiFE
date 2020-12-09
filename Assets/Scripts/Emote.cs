@@ -18,7 +18,6 @@ public class Emote : Poolable
     {
         scale = "3.0";
         var loaded = base.Load(emote.id) as Emote;
-        loaded.ChangeIndex(emote);
         return loaded;
     }
 
