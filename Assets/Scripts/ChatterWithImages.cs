@@ -53,4 +53,13 @@ public class ChatterWithImages
         return new KeyValuePair<bool, Emote>(false,null);
     }
 
+    public int Length()
+    {
+        int msg = message.Length;
+        foreach (var emote in emotes)
+            foreach (var ind in emote.indexes)
+                msg -= (ind.endIndex - ind.startIndex);
+        return msg;
+    }
+
 }

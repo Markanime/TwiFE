@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 class TextController
 {
-    private readonly TwifeText twife;
+    private readonly TextPrinter twife;
     private readonly Text canvas;
     private readonly TextMesh mesh;
     private readonly InputField input;
@@ -14,7 +14,7 @@ class TextController
     {
         get 
         {
-            if (twife) return twife.text;
+            if (twife) return twife.Text;
             //if (uGUIPro) return uGUIPro.text;
             //if (Pro) return Pro.text;
             if (mesh) return mesh.text;
@@ -23,7 +23,7 @@ class TextController
         }
         set
         {
-            if (twife) { twife.text = value; return; }
+            if (twife) { twife.Text = value; return; }
             //if (uGUIPro) { uGUIPro.text = value; return; }
             //if (Pro) { Pro.text = value; return; }
             if (mesh) { mesh.text = value; return; }
@@ -38,7 +38,7 @@ class TextController
         //Pro = consumer.GetComponent<TextMeshPro>();
         //uGUIPro = consumer.GetComponent<TextMeshProUGUI>();
         input = consumer.GetComponent<InputField>();
-        twife = consumer.GetComponent<TwifeText>();
+        twife = consumer.GetComponent<TextPrinter>();
     }
 
     public void SetChatter(ChatterWithImages chatter)

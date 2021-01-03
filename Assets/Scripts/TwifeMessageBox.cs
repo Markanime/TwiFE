@@ -72,7 +72,7 @@ public class TwifeMessageBox : MonoBehaviour
         yield return chatter.channel.GetTexture(channelIcon);
         if(!animator.GetCurrentAnimatorStateInfo(0).IsTag("showing"))
             animator.SetTrigger("show");
-        text.Type(chatter);
+        text.SetChatter(chatter);
         printing = false;
     }
 }

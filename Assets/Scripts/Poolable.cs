@@ -62,6 +62,7 @@ public class Poolable : MonoBehaviour
         else
         {
             i.sprite = null;
+            i.color = new Color(i.color.r, i.color.g, i.color.b, 0);
         }
         yield return 0;
     }
